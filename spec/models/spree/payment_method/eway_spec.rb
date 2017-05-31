@@ -1,0 +1,29 @@
+require 'spec_helper'
+
+describe Spree::PaymentMethod::Eway do
+  subject { described_class.create!(name: 'Eway') }
+
+  context '.gateway_class' do
+    it 'is a Eway gateway' do
+      expect(subject.gateway_class).to eq ::ActiveMerchant::Billing::EwayGateway
+    end
+  end
+
+  context '.auto_capture?' do
+    it 'supports purchase method only' do
+      expect(subject.auto_capture?).to be true
+    end
+  end
+
+  describe 'options' do
+    it 'include :test => true in  when :test_mode is true' do
+      subject.preferred_test_mode = true
+      expect(subject.options[:test]).to be true
+    end
+
+    it 'does not include :test when test_mode is false' do
+      subject.preferred_test_mode = false
+      expect(subject.options[:test]).to be false
+    end
+  end
+end

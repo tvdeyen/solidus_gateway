@@ -1,0 +1,9 @@
+module Spree
+  class PaymentMethod::UsaEpay < PaymentMethod::CreditCard
+    preference :login, :string
+
+    def gateway_class
+      ActiveMerchant::Billing::UsaEpayGateway
+    end
+  end
+end

@@ -1,0 +1,10 @@
+module Spree
+  class PaymentMethod::CardSave < PaymentMethod::CreditCard
+    preference :login, :string
+    preference :password, :string
+
+    def gateway_class
+      ActiveMerchant::Billing::CardSaveGateway
+    end
+  end
+end

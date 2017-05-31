@@ -9,7 +9,7 @@ RSpec.describe "Stripe checkout", type: :feature do
     zone.members << Spree::ZoneMember.create!(zoneable: country)
     FactoryGirl.create(:free_shipping_method)
 
-    Spree::Gateway::StripeGateway.create!(
+    Spree::PaymentMethod::StripeCreditCard.create!(
       name: "Stripe",
       preferred_secret_key: "sk_test_VCZnDv3GLU15TRvn8i2EsaAN",
       preferred_publishable_key: "pk_test_Cuf0PNtiAkkMpTVC2gwYDMIg",

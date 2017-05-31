@@ -4,33 +4,33 @@ module SpreeGateway
 
     config.autoload_paths += %W(#{config.root}/lib)
 
-    initializer "spree.gateway.payment_methods", :after => "spree.register.payment_methods" do |app|
-        app.config.spree.payment_methods << Spree::Gateway::AuthorizeNetCim
-        app.config.spree.payment_methods << Spree::Gateway::AuthorizeNet
-        app.config.spree.payment_methods << Spree::Gateway::CardSave
-        app.config.spree.payment_methods << Spree::Gateway::Eway
-        app.config.spree.payment_methods << Spree::Gateway::Linkpoint
-        app.config.spree.payment_methods << Spree::Gateway::Moneris
-        app.config.spree.payment_methods << Spree::Gateway::PayJunction
-        app.config.spree.payment_methods << Spree::Gateway::PayPalGateway
-        app.config.spree.payment_methods << Spree::Gateway::SagePay
-        app.config.spree.payment_methods << Spree::Gateway::Beanstream
-        app.config.spree.payment_methods << Spree::Gateway::BraintreeGateway
-        app.config.spree.payment_methods << Spree::Gateway::StripeGateway
-        app.config.spree.payment_methods << Spree::Gateway::Worldpay
-        app.config.spree.payment_methods << Spree::Gateway::Banwire
-        app.config.spree.payment_methods << Spree::Gateway::UsaEpay
-        app.config.spree.payment_methods << Spree::BillingIntegration::Skrill::QuickCheckout
-        app.config.spree.payment_methods << Spree::Gateway::BalancedGateway
-        app.config.spree.payment_methods << Spree::Gateway::DataCash
-        app.config.spree.payment_methods << Spree::Gateway::UsaEpay
-        app.config.spree.payment_methods << Spree::Gateway::PinGateway
-        app.config.spree.payment_methods << Spree::Gateway::Paymill
-        app.config.spree.payment_methods << Spree::Gateway::PayflowPro
-        app.config.spree.payment_methods << Spree::Gateway::SecurePayAU
-        app.config.spree.payment_methods << Spree::Gateway::Maxipago
-        app.config.spree.payment_methods << Spree::Gateway::Migs
-        app.config.spree.payment_methods << Spree::Gateway::SpreedlyCoreGateway
+    initializer "spree.gateway.payment_methods", after: "spree.register.payment_methods" do |app|
+      app.config.spree.payment_methods << Spree::PaymentMethod::AuthorizeNetCim
+      app.config.spree.payment_methods << Spree::PaymentMethod::AuthorizeNet
+      app.config.spree.payment_methods << Spree::PaymentMethod::CardSave
+      app.config.spree.payment_methods << Spree::PaymentMethod::Eway
+      app.config.spree.payment_methods << Spree::PaymentMethod::Linkpoint
+      app.config.spree.payment_methods << Spree::PaymentMethod::Moneris
+      app.config.spree.payment_methods << Spree::PaymentMethod::PayJunction
+      app.config.spree.payment_methods << Spree::PaymentMethod::PayPal
+      app.config.spree.payment_methods << Spree::PaymentMethod::SagePay
+      app.config.spree.payment_methods << Spree::PaymentMethod::Beanstream
+      app.config.spree.payment_methods << Spree::PaymentMethod::BraintreeCreditCard
+      app.config.spree.payment_methods << Spree::PaymentMethod::StripeCreditCard
+      app.config.spree.payment_methods << Spree::PaymentMethod::Worldpay
+      app.config.spree.payment_methods << Spree::PaymentMethod::Banwire
+      app.config.spree.payment_methods << Spree::PaymentMethod::UsaEpay
+      app.config.spree.payment_methods << Spree::BillingIntegration::Skrill::QuickCheckout
+      app.config.spree.payment_methods << Spree::PaymentMethod::BalancedCreditCard
+      app.config.spree.payment_methods << Spree::PaymentMethod::DataCash
+      app.config.spree.payment_methods << Spree::PaymentMethod::UsaEpay
+      app.config.spree.payment_methods << Spree::PaymentMethod::PinCreditCard
+      app.config.spree.payment_methods << Spree::PaymentMethod::Paymill
+      app.config.spree.payment_methods << Spree::PaymentMethod::PayflowPro
+      app.config.spree.payment_methods << Spree::PaymentMethod::SecurePayAU
+      app.config.spree.payment_methods << Spree::PaymentMethod::Maxipago
+      app.config.spree.payment_methods << Spree::PaymentMethod::Migs
+      app.config.spree.payment_methods << Spree::PaymentMethod::SpreedlyCreditCard
     end
 
     # The application_id is a class attribute on all gateways and is used to
@@ -41,7 +41,7 @@ module SpreeGateway
     initializer "spree.gateway.braintree_gateway.application_id" do |app|
       # NOTE: if the braintree gem is not loaded, calling ActiveMerchant::Billing::BraintreeBlueGateway crashes
       # therefore, check here to see if Braintree exists before trying to call it
-      if defined?(Braintree) 
+      if defined?(Braintree)
         ActiveMerchant::Billing::BraintreeBlueGateway.application_id = "Solidus"
       end
     end
