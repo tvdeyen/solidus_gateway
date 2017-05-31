@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Gateway::Maxipago do
-  let(:gateway) { described_class.create!(name: 'Maxipago') }
+  subject { described_class.create!(name: 'Maxipago') }
 
   context '.gateway_class' do
     it 'is a Maxipago gateway' do

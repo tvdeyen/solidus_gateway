@@ -1,12 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Gateway::PinGateway do
+  subject do
+    described_class.create!(name: 'Pin Gateway', active: true)
+  end
 
   before do
     Spree::PaymentMethod.update_all(active: false)
-    @gateway = described_class.create!(name: 'Pin Gateway', active: true)
-    @gateway.set_preference(:api_key, 'W_VzkRCZSILiKWUS-dndUg')
-    @gateway.save!
+    subject.set_preference(:api_key, 'W_VzkRCZSILiKWUS-dndUg')
+    subject.save!
 
     country = create(:country, name: 'Australia', iso_name: 'Australia', iso3: 'AUS', iso: 'AU', numcode: 61)
     state   = create(:state, name: 'Victoria', abbr: 'VIC', country: country)
@@ -34,7 +36,7 @@ describe Spree::Gateway::PinGateway do
       cc_type:            'mastercard'
     )
 
-    @payment = create(:payment, source: credit_card, order: order, payment_method: @gateway, amount: 10.00)
+    @payment = create(:payment, source: credit_card, order: order, payment_method: subject, amount: 10.00)
   end
 
   it 'can purchase' do
@@ -44,7 +46,7 @@ describe Spree::Gateway::PinGateway do
 
   # Regression test for #106
   it 'uses auto capturing' do
-    expect(@gateway.auto_capture?).to be true
+    expect(subject.auto_capture?).to be true
   end
 
   it 'always uses purchase' do

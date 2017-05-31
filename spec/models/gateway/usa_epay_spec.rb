@@ -1,11 +1,15 @@
 require 'spec_helper'
 
 describe Spree::Gateway::UsaEpay do
+  subject do
+    Spree::Gateway::UsaEpay.create!(name: 'USA EPay Gateway', active: true)
+  end
+
   before do
     Spree::PaymentMethod.update_all(active: false)
-    @gateway = Spree::Gateway::UsaEpay.create!(name: 'USA EPay Gateway', active: true)
-    @gateway.set_preference(:login, '0r19zQBdp5nS8i3t4hFxz0di13yf56q1')
-    @gateway.save!
+
+    subject.set_preference(:login, '0r19zQBdp5nS8i3t4hFxz0di13yf56q1')
+    subject.save!
 
     country = create(:country, name: 'United States', iso_name: 'UNITED STATES', iso3: 'USA', iso: 'US', numcode: 840)
     state = create(:state, name: 'Maryland', abbr: 'MD', country: country)
@@ -30,7 +34,7 @@ describe Spree::Gateway::UsaEpay do
       year:               Time.now.year + 1,
       name:               'John Doe')
 
-    @payment = create(:payment, source: credit_card, order: order, payment_method: @gateway, amount: 10.00)
+    @payment = create(:payment, source: credit_card, order: order, payment_method: subject, amount: 10.00)
   end
 
   context 'purchasing' do
@@ -42,7 +46,7 @@ describe Spree::Gateway::UsaEpay do
 
   context '.gateway_class' do
     it 'is a Worldpay gateway' do
-      expect(@gateway.gateway_class).to eq ::ActiveMerchant::Billing::UsaEpayGateway
+      expect(subject.gateway_class).to eq ::ActiveMerchant::Billing::UsaEpayGateway
     end
   end
 end

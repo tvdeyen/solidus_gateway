@@ -2,17 +2,20 @@ require 'spec_helper'
 require 'pry'
 
 describe Spree::Gateway::BraintreeGateway do
+  subject do
+    Spree::Gateway::BraintreeGateway.create!(name: 'Braintree Gateway', active: true)
+  end
 
   before do
     Spree::PaymentMethod.update_all(active: false)
-    @gateway = Spree::Gateway::BraintreeGateway.create!(name: 'Braintree Gateway', active: true)
-    @gateway.preferences = {
+
+    subject.preferences = {
       environment: 'sandbox',
       merchant_id: 'zbn5yzq9t7wmwx42',
       public_key: 'ym9djwqpkxbv3xzt',
       private_key: '4ghghkyp2yy6yqc8'
     }
-    @gateway.save!
+    subject.save!
 
     with_payment_profiles_off do
       country = create(:country, name: 'United States', iso_name: 'UNITED STATES', iso3: 'USA', iso: 'US', numcode: 840)
@@ -42,7 +45,7 @@ describe Spree::Gateway::BraintreeGateway do
         name:               'John Doe',
         cc_type:            'mastercard')
 
-      @payment = create(:payment, source: @credit_card, order: order, payment_method: @gateway, amount: 10.00)
+      @payment = create(:payment, source: @credit_card, order: order, payment_method: subject, amount: 10.00)
     end
   end
 
@@ -74,12 +77,12 @@ describe Spree::Gateway::BraintreeGateway do
         name:               'John Doe',
         cc_type:            'mastercard')
 
-      @payment = create(:payment, source: @credit_card, order: order, payment_method: @gateway, amount: 10.00)
+      @payment = create(:payment, source: @credit_card, order: order, payment_method: subject, amount: 10.00)
     end
 
     context 'when a credit card is created' do
       it 'it has the address associated on the remote payment profile' do
-        remote_customer = @gateway.provider.instance_variable_get(:@braintree_gateway).customer.find(@credit_card.gateway_customer_profile_id)
+        remote_customer = subject.provider.instance_variable_get(:@braintree_gateway).customer.find(@credit_card.gateway_customer_profile_id)
         remote_address = remote_customer.addresses.first rescue nil
         expect(remote_address).not_to be_nil
         expect(remote_address.street_address).to eq(@address.address1)
@@ -123,21 +126,21 @@ describe Spree::Gateway::BraintreeGateway do
     end
 
     it 'should fail creation' do
-      expect{ create(:payment, source: @credit_card, order: @order, payment_method: @gateway, amount: 10.00) }.to raise_error Spree::Core::GatewayError
+      expect{ create(:payment, source: @credit_card, order: @order, payment_method: subject, amount: 10.00) }.to raise_error Spree::Core::GatewayError
     end
 
   end
 
   describe 'merchant_account_id' do
     before do
-      @gateway.preferences[:merchant_account_id] = merchant_account_id
+      subject.preferences[:merchant_account_id] = merchant_account_id
     end
 
     context 'with merchant_account_id empty' do
       let(:merchant_account_id) { '' }
 
       it 'does not be present in options' do
-        expect(@gateway.options.keys.include?(:merchant_account_id)).to be false
+        expect(subject.options.keys.include?(:merchant_account_id)).to be false
       end
     end
 
@@ -145,34 +148,34 @@ describe Spree::Gateway::BraintreeGateway do
       let(:merchant_account_id) { 'test' }
 
       it 'have a perferred_merchant_account_id' do
-        expect(@gateway.preferred_merchant_account_id).to eq merchant_account_id
+        expect(subject.preferred_merchant_account_id).to eq merchant_account_id
       end
 
       it 'have a preferences[:merchant_account_id]' do
-        expect(@gateway.preferences.keys.include?(:merchant_account_id)).to be true
+        expect(subject.preferences.keys.include?(:merchant_account_id)).to be true
       end
 
       it 'is present in options' do
-        expect(@gateway.options.keys.include?(:merchant_account_id)).to be true
+        expect(subject.options.keys.include?(:merchant_account_id)).to be true
       end
     end
   end
 
   context '.gateway_class' do
     it 'is a BraintreeBlue gateway' do
-      expect(@gateway.gateway_class).to eq ::ActiveMerchant::Billing::BraintreeBlueGateway
+      expect(subject.gateway_class).to eq ::ActiveMerchant::Billing::BraintreeBlueGateway
     end
   end
 
   context '.payment_profiles_supported?' do
     it 'return true' do
-      expect(@gateway.payment_profiles_supported?).to be true
+      expect(subject.payment_profiles_supported?).to be true
     end
   end
 
   context 'preferences' do
     it 'does not include server + test_mode' do
-      expect { @gateway.preferences.fetch(:server) }.to raise_error(StandardError)
+      expect { subject.preferences.fetch(:server) }.to raise_error(StandardError)
     end
   end
 
@@ -183,8 +186,8 @@ describe Spree::Gateway::BraintreeGateway do
       end
 
       it 'calls provider#authorize using the gateway_payment_profile_id' do
-        expect(@gateway.provider).to receive(:authorize).with(500, 'test', { payment_method_token: true } )
-        @gateway.authorize(500, @credit_card)
+        expect(subject.provider).to receive(:authorize).with(500, 'test', { payment_method_token: true } )
+        subject.authorize(500, @credit_card)
       end
     end
 
@@ -195,21 +198,21 @@ describe Spree::Gateway::BraintreeGateway do
         end
 
         it 'calls provider#authorize using the gateway_customer_profile_id' do
-          expect(@gateway.provider).to receive(:authorize).with(500, '12345', {})
-          @gateway.authorize(500, @credit_card)
+          expect(subject.provider).to receive(:authorize).with(500, '12345', {})
+          subject.authorize(500, @credit_card)
         end
       end
 
       context "no customer profile id" do
         it 'calls provider#authorize with the credit card object' do
-          expect(@gateway.provider).to receive(:authorize).with(500, @credit_card, {})
-          @gateway.authorize(500, @credit_card)
+          expect(subject.provider).to receive(:authorize).with(500, @credit_card, {})
+          subject.authorize(500, @credit_card)
         end
       end
     end
 
     it 'return a success response with an authorization code' do
-      result = @gateway.authorize(500, @credit_card)
+      result = subject.authorize(500, @credit_card)
 
       expect(result.success?).to be true
       expect(result.authorization).to be_present
@@ -298,7 +301,7 @@ describe Spree::Gateway::BraintreeGateway do
       transaction = ::Braintree::Transaction.find(@payment.response_code)
       expect(transaction.status).to eq Braintree::Transaction::Status::Authorized
 
-      capture_result = @gateway.capture(@payment.amount, @payment.response_code)
+      capture_result = subject.capture(@payment.amount, @payment.response_code)
       expect(capture_result.success?).to be true
 
       transaction = ::Braintree::Transaction.find(@payment.response_code)
@@ -324,7 +327,7 @@ describe Spree::Gateway::BraintreeGateway do
 
   context 'purchase' do
     it 'return a success response with an authorization code' do
-      result =  @gateway.purchase(500, @credit_card)
+      result =  subject.purchase(500, @credit_card)
       expect(result.success?).to be true
       expect(result.authorization).to be_present
       expect(Braintree::Transaction::Status::SubmittedForSettlement).to eq Braintree::Transaction.find(result.authorization).status
@@ -378,7 +381,7 @@ describe Spree::Gateway::BraintreeGateway do
   context 'update_card_number' do
     it 'passes through gateway_payment_profile_id' do
       credit_card = { 'token' => 'testing', 'last_4' => '1234', 'masked_number' => '555555******4444' }
-      @gateway.update_card_number(@payment.source, credit_card)
+      subject.update_card_number(@payment.source, credit_card)
       expect(@payment.source.gateway_payment_profile_id).to eq 'testing'
     end
   end
