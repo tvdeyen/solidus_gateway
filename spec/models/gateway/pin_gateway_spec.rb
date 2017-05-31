@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Gateway::PinGateway do
 
   before do
-    Spree::Gateway.update_all(active: false)
+    Spree::PaymentMethod.update_all(active: false)
     @gateway = described_class.create!(name: 'Pin Gateway', active: true)
     @gateway.set_preference(:api_key, 'W_VzkRCZSILiKWUS-dndUg')
     @gateway.save!

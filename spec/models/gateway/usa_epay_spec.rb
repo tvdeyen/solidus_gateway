@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Gateway::UsaEpay do
   before do
-    Spree::Gateway.update_all(active: false)
+    Spree::PaymentMethod.update_all(active: false)
     @gateway = Spree::Gateway::UsaEpay.create!(name: 'USA EPay Gateway', active: true)
     @gateway.set_preference(:login, '0r19zQBdp5nS8i3t4hFxz0di13yf56q1')
     @gateway.save!

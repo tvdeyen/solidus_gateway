@@ -4,7 +4,7 @@ require 'pry'
 describe Spree::Gateway::BraintreeGateway do
 
   before do
-    Spree::Gateway.update_all(active: false)
+    Spree::PaymentMethod.update_all(active: false)
     @gateway = Spree::Gateway::BraintreeGateway.create!(name: 'Braintree Gateway', active: true)
     @gateway.preferences = {
       environment: 'sandbox',
