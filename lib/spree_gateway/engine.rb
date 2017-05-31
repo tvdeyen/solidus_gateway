@@ -31,6 +31,15 @@ module SpreeGateway
       app.config.spree.payment_methods << Spree::PaymentMethod::Maxipago
       app.config.spree.payment_methods << Spree::PaymentMethod::Migs
       app.config.spree.payment_methods << Spree::PaymentMethod::SpreedlyCreditCard
+
+      # "Eager load" all old deprecated gateways;
+      # otherwise Rails won't correctly initialize them.
+      # TODO: Remove eager loading of deprecated gateways once they get removed
+      unless app.config.eager_load
+        Dir.glob('../../app/models/spree/gateway/*').each do |klass|
+          require_relative klass
+        end
+      end
     end
 
     # The application_id is a class attribute on all gateways and is used to
