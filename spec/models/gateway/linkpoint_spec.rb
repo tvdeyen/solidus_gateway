@@ -2,14 +2,14 @@ require 'spec_helper'
 
 describe Spree::Gateway::Linkpoint do
   subject { described_class.create!(name: 'Linkpoint') }
-  let(:provider) { double('provider') }
+  let(:gateway) { double('gateway') }
   let(:money) { double('money') }
   let(:credit_card) { double('credit_card') }
   let(:identification) { double('identification') }
   let(:options) { { subtotal: 3, discount: -1 } }
 
   before do
-    allow(subject.gateway_class).to receive_messages(new: provider)
+    allow(subject.gateway_class).to receive_messages(new: gateway)
   end
 
   context '.gateway_class' do
@@ -20,7 +20,7 @@ describe Spree::Gateway::Linkpoint do
 
   context '#authorize' do
     it 'adds the discount to the subtotal' do
-      expect(provider).to receive(:authorize)
+      expect(gateway).to receive(:authorize)
         .with(money, credit_card, subtotal: 2, discount: 0)
       subject.authorize(money, credit_card, options)
     end
@@ -28,7 +28,7 @@ describe Spree::Gateway::Linkpoint do
 
   context '#purchase' do
     it 'adds the discount to the subtotal' do
-      expect(provider).to receive(:purchase)
+      expect(gateway).to receive(:purchase)
         .with(money, credit_card, subtotal: 2, discount: 0)
       subject.purchase(money, credit_card, options)
     end
@@ -38,7 +38,7 @@ describe Spree::Gateway::Linkpoint do
     let(:authorization) { double('authorization') }
 
     it 'adds the discount to the subtotal' do
-      expect(provider).to receive(:capture)
+      expect(gateway).to receive(:capture)
         .with(money, authorization, subtotal: 2, discount: 0)
       subject.capture(money, authorization, options)
     end
@@ -46,7 +46,7 @@ describe Spree::Gateway::Linkpoint do
 
   context '#void' do
     it 'adds the discount to the subtotal' do
-      expect(provider).to receive(:void)
+      expect(gateway).to receive(:void)
         .with(identification, subtotal: 2, discount: 0)
       subject.void(identification, options)
     end
@@ -54,7 +54,7 @@ describe Spree::Gateway::Linkpoint do
 
   context '#credit' do
     it 'adds the discount to the subtotal' do
-      expect(provider).to receive(:credit)
+      expect(gateway).to receive(:credit)
         .with(money, identification, subtotal: 2, discount: 0)
       subject.credit(money, identification, options)
     end

@@ -9,7 +9,7 @@ module Spree
 
     def purchase(money, creditcard, gateway_options)
       gateway_options[:description] = "Spree Order"
-      provider.purchase(money, creditcard, gateway_options)
+      gateway.purchase(money, creditcard, gateway_options)
     end
   end
 end

@@ -82,7 +82,7 @@ describe Spree::Gateway::BraintreeGateway do
 
     context 'when a credit card is created' do
       it 'it has the address associated on the remote payment profile' do
-        remote_customer = subject.provider.instance_variable_get(:@braintree_gateway).customer.find(@credit_card.gateway_customer_profile_id)
+        remote_customer = subject.gateway.instance_variable_get(:@braintree_gateway).customer.find(@credit_card.gateway_customer_profile_id)
         remote_address = remote_customer.addresses.first rescue nil
         expect(remote_address).not_to be_nil
         expect(remote_address.street_address).to eq(@address.address1)
@@ -185,8 +185,8 @@ describe Spree::Gateway::BraintreeGateway do
         @credit_card.update_attributes(gateway_payment_profile_id: 'test')
       end
 
-      it 'calls provider#authorize using the gateway_payment_profile_id' do
-        expect(subject.provider).to receive(:authorize).with(500, 'test', { payment_method_token: true } )
+      it 'calls gateway#authorize using the gateway_payment_profile_id' do
+        expect(subject.gateway).to receive(:authorize).with(500, 'test', { payment_method_token: true } )
         subject.authorize(500, @credit_card)
       end
     end
@@ -197,15 +197,15 @@ describe Spree::Gateway::BraintreeGateway do
           @credit_card.update_attributes(gateway_customer_profile_id: '12345')
         end
 
-        it 'calls provider#authorize using the gateway_customer_profile_id' do
-          expect(subject.provider).to receive(:authorize).with(500, '12345', {})
+        it 'calls gateway#authorize using the gateway_customer_profile_id' do
+          expect(subject.gateway).to receive(:authorize).with(500, '12345', {})
           subject.authorize(500, @credit_card)
         end
       end
 
       context "no customer profile id" do
-        it 'calls provider#authorize with the credit card object' do
-          expect(subject.provider).to receive(:authorize).with(500, @credit_card, {})
+        it 'calls gateway#authorize with the credit card object' do
+          expect(subject.gateway).to receive(:authorize).with(500, @credit_card, {})
           subject.authorize(500, @credit_card)
         end
       end

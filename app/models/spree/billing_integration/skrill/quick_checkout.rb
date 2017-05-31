@@ -34,8 +34,7 @@ module Spree
       opts[:platform] = 'Spree'
       opts[:order_id] = order.number
 
-      skrill = self.provider
-      skrill.payment_url(opts)
+      gateway.payment_url(opts)
     end
 
     private
