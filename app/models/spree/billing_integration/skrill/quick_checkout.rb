@@ -6,7 +6,7 @@ module Spree
     preference :payment_options, :string, :default => 'ACC'
     preference :pay_to_email, :string ,   :default => 'your@merchant.email_here'
 
-    def provider_class
+    def gateway_class
       ActiveMerchant::Billing::Skrill
     end
 

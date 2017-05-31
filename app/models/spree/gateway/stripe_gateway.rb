@@ -13,7 +13,7 @@ module Spree
       'stripe'
     end
 
-    def provider_class
+    def gateway_class
       ActiveMerchant::Billing::StripeGateway
     end
 
