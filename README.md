@@ -19,6 +19,8 @@ For **new stores we strongly recommend** using one of these payment provider ext
 * [`solidus_affirm`](https://github.com/StemboltHQ/solidus_affirm) for Affirm provided payment methods
 * [`solidus_klarna_payments`](https://github.com/bitspire/solidus_klarna_payments)
 * [`solidus_paybright`](https://github.com/StemboltHQ/solidus_paybright)
+* [`solidus_culqi`](https://github.com/ccarruitero/solidus_culqi) for Culqi provided payment methods
+* [`solidus_payu_latam`](https://github.com/ccarruitero/solidus_payu_latam) for Payu Latam provided payment methods
 
 Although we will keep supporting Bug fixes for existing payment methods we **will not accept new payment methods** to be included in this gem.
 
